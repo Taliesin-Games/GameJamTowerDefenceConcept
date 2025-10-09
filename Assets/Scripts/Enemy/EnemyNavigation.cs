@@ -27,26 +27,30 @@ public class EnemyNavigation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (agent.hasPath && debugPath)
+        if (!agent.hasPath && !debugPath)
         {
-            NavMeshPath path = agent.path;
-            for (int i = 0; i < path.corners.Length - 1; i++)
-            {
-                Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);
-            }
+            return;
+        }
+
+        NavMeshPath path = agent.path;
+        for (int i = 0; i < path.corners.Length - 1; i++)
+        {
+            Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red);
         }
     }
 
     public bool HasReachedDestination()
     {
-        if (!agent.pathPending)
+        if (agent.pathPending)
         {
-            if (agent.remainingDistance <= agent.stoppingDistance)
+            return false;
+        }
+
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
             {
-                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
-                {
-                    return true;
-                }
+                return true;
             }
         }
         return false;

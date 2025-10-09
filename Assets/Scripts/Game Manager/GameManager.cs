@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Canvase References")]
     [SerializeField] GameObject playCanvas;
+    
     #endregion
 
     #region Cached References

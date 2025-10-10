@@ -21,7 +21,7 @@ public class EnemySpawner : MonoBehaviour
     #region Runtime Variables
     float nextSpawnTime;
     int spawnedCount = 0;
-    bool doneSpawning => spawnedCount >= spawnCount;
+    public bool doneSpawning => spawnedCount >= spawnCount;
     #endregion
 
     #region Properties
@@ -56,14 +56,17 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         SpawnEnemies();
+        Debug.Log("Done spawning: " + doneSpawning);
     }
 
     private void SpawnEnemies()
     {
-        if (nextSpawnTime < Time.time) return;
+        float t = Time.time;
+        if (nextSpawnTime > t) return;
         if (doneSpawning) return;
 
         spawnedCount++;
+        nextSpawnTime = Time.time + spawnInterval;
 
         int i = Random.Range(0, spawnLocations.Length);
         Transform spawnLocation = spawnLocations[i].transform;

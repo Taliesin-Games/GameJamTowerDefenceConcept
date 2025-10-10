@@ -1,16 +1,30 @@
 using UnityEngine;
+using Utils;
 
 public class Health : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    [SerializeField] float MaxHealth = 100f;
+    float CurrentHealth = 0;
+
     void Start()
     {
-        
+        CurrentHealth = MaxHealth;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage(float damage)
     {
-        
+        CurrentHealth -= damage;
+        Debugger.Log($"{transform.root.name} has taken {damage} damage");
+        if (CurrentHealth <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Debugger.Log($"{transform.root.name} has died");
+        SendMessage("Die", SendMessageOptions.DontRequireReceiver);
     }
 }

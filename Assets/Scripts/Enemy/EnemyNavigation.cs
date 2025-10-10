@@ -12,12 +12,10 @@ public class EnemyNavigation : MonoBehaviour
 
 
     [SerializeField] bool debugPath = true;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
-    
 
     public void MoveTo(Vector3 targetPos)
     {

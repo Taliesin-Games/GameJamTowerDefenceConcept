@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 9044314073234623756}
   - component: {fileID: 7057362881630815874}
   - component: {fileID: 2204557722989211011}
+  - component: {fileID: 8439160149592301057}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -170,3 +171,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   backgroundMusic: {fileID: 8300000, guid: 086c6ddbe3595334d8218f9c107f9e91, type: 3}
+--- !u!114 &8439160149592301057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3390565068289297619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b44b9d0ef2d8f7a4f8e20a8ee52302a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnInterval: 0.5
+  spawnCount: 10
+  enemyPrefab: {fileID: 0}
+  spawnLocations: []

@@ -51,18 +51,14 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
 
     }
-
     void Update()
     {
         if(gameOver || gameWon) return;
 
         
     }
-    
-    
     private void WinGame()
     {
         gameWon = true;
@@ -70,8 +66,6 @@ public class GameManager : MonoBehaviour
 
         LevelManager.LoadWinScreen();
     }
-    
-   
     void GameOver()
     {
         playCanvas.SetActive(false);

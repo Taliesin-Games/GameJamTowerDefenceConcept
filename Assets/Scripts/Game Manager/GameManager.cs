@@ -8,7 +8,6 @@ using UnityEngine.UI;
 [RequireComponent(typeof(LevelManager))]
 public class GameManager : MonoBehaviour
 {
-
     public static GameManager Instance { get; private set; }
 
     #region Configuration
@@ -77,6 +76,16 @@ public class GameManager : MonoBehaviour
     }
     private void RunPerSceneSetup()
     {
+
+    }
+
+    public void CheckWinGame()
+    {
+        if (Enemy.EnemyCount > 0) return;
+        if (!EnemySpawner.Instance.doneSpawning) return;
+
+        gameWon = true;
+        LevelManager.LoadWinScreen();
 
     }
     private void OnDestroy()

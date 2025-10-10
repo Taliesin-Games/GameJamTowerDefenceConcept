@@ -140,7 +140,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 656
+        y: 760
         width: 1111
         height: 240
       alignment: 0
@@ -162,7 +162,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1164
-        y: 653
+        y: 757
         width: 168
         height: 227
       alignment: 0
@@ -184,7 +184,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 400
+        y: 504
         width: 471
         height: 240
       alignment: 0
@@ -206,7 +206,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 512
-        y: 400
+        y: 504
         width: 368
         height: 240
       alignment: 0
@@ -228,7 +228,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 888
-        y: 392
+        y: 496
         width: 256
         height: 256
       alignment: 0
@@ -250,7 +250,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 151
-        y: 23
+        y: 127
         width: 367
         height: 369
       alignment: 0
@@ -263,6 +263,28 @@ TextureImporter:
       bones: []
       spriteID: 81009e1d4fe1141489a2ac2066e7db77
       internalID: 389640850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI Game Jam_6
+      rect:
+        serializedVersion: 2
+        x: 481
+        y: 12
+        width: 904
+        height: 100
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e0ef6b7ca183e94a85f75e99f7669f1
+      internalID: 272692925
       vertices: []
       indices: 
       edges: []
@@ -287,6 +309,7 @@ TextureImporter:
       UI Game Jam_3: 982773739
       UI Game Jam_4: -1314356658
       UI Game Jam_5: 389640850
+      UI Game Jam_6: 272692925
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

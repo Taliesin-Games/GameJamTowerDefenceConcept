@@ -96,6 +96,7 @@ public class PlayerController : MonoBehaviour
     private int _animIDJump;
     private int _animIDFreeFall;
     private int _animIDMotionSpeed;
+    private int _animIDAttack;
 
 #if ENABLE_INPUT_SYSTEM 
     private PlayerInput _playerInput;
@@ -104,6 +105,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController _controller;
     private StarterAssetsInputs _input;
     private GameObject _mainCamera;
+    private Player _player;
 
     private const float _threshold = 0.01f;
 
@@ -121,6 +123,8 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private bool isAttacking = false;
+
 
     private void Awake()
     {
@@ -130,7 +134,6 @@ public class PlayerController : MonoBehaviour
             _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         }
     }
-
     private void Start()
     {
         _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
@@ -138,6 +141,7 @@ public class PlayerController : MonoBehaviour
         _hasAnimator = TryGetComponent(out _animator);
         _controller = GetComponent<CharacterController>();
         _input = GetComponent<StarterAssetsInputs>();
+        _player = GetComponent<Player>();
 #if ENABLE_INPUT_SYSTEM 
         _playerInput = GetComponent<PlayerInput>();
 #else
@@ -150,7 +154,6 @@ public class PlayerController : MonoBehaviour
         _jumpTimeoutDelta = JumpTimeout;
         _fallTimeoutDelta = FallTimeout;
     }
-
     private void Update()
     {
         _hasAnimator = TryGetComponent(out _animator);
@@ -158,13 +161,12 @@ public class PlayerController : MonoBehaviour
         JumpAndGravity();
         GroundedCheck();
         Move();
+        Attack();
     }
-
     private void LateUpdate()
     {
         CameraRotation();
     }
-
     private void AssignAnimationIDs()
     {
         _animIDSpeed = Animator.StringToHash("Speed");
@@ -172,6 +174,7 @@ public class PlayerController : MonoBehaviour
         _animIDJump = Animator.StringToHash("Jump");
         _animIDFreeFall = Animator.StringToHash("FreeFall");
         _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
+        _animIDAttack = Animator.StringToHash("Attack");
     }
 
     private void GroundedCheck()
@@ -214,12 +217,16 @@ public class PlayerController : MonoBehaviour
     {
         // set target speed based on move speed, sprint speed and if sprint is pressed
         float targetSpeed = _input.sprint ? SprintSpeed : MoveSpeed;
+        
 
         // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
         // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is no input, set the target speed to 0
         if (_input.move == Vector2.zero) targetSpeed = 0.0f;
+
+        // If the player is dead, we should not be able to move
+        if (_player.IsDead) targetSpeed = 0.0f;
 
         // a reference to the players current horizontal velocity
         float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -278,6 +285,32 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Attack()
+    {
+        // If the player is dead, we should not be able to attack
+        if (_player.IsDead || isAttacking) return;
+        isAttacking = true;
+
+        _animator.SetLayerWeight(1, 1f);
+
+        if (_input.attack)
+        {
+            // Attack animation trigger
+            if (_hasAnimator)
+            {
+                _animator.SetTrigger(_animIDAttack);
+            }
+            // Reset attack input
+            _input.attack = false;
+        }
+    }
+
+    public void OnAttackEnded()
+    {
+        Debug.Log("Attack ended");
+        isAttacking = false;
+        _animator.SetLayerWeight(1, 0f);
+    }
     private void JumpAndGravity()
     {
         if (Grounded)
@@ -299,7 +332,7 @@ public class PlayerController : MonoBehaviour
             }
 
             // Jump
-            if (_input.jump && _jumpTimeoutDelta <= 0.0f)
+            if (!_player.IsDead && _input.jump && _jumpTimeoutDelta <= 0.0f)
             {
                 // the square root of H * -2 * G = how much velocity needed to reach desired height
                 _verticalVelocity = Mathf.Sqrt(JumpHeight * -2f * Gravity);

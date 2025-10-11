@@ -20,6 +20,9 @@ public class PlayerController : MonoBehaviour
     [Tooltip("Sprint speed of the character in m/s")]
     public float SprintSpeed = 5.335f;
 
+    [Tooltip("Enable or disable rotation.")]
+    public bool RotationEnabled = true;
+
     [Tooltip("How fast the character turns to face movement direction")]
     [Range(0.0f, 0.3f)]
     public float RotationSmoothTime = 0.12f;
@@ -215,6 +218,7 @@ public class PlayerController : MonoBehaviour
     }
     private void CameraRotation()
     {
+        if (!RotationEnabled) return;
         // if there is an input and camera position is not fixed
         if (_input.look.sqrMagnitude >= _threshold && !LockCameraPosition)
         {

@@ -9,6 +9,10 @@ using Utils;
 ]
 public class Enemy : MonoBehaviour
 {
+
+    static int count = 0;
+    public static int EnemyCount => count;
+
     enum EnemyState
     {
         Idle,      // not moving or attacking
@@ -16,7 +20,6 @@ public class Enemy : MonoBehaviour
         Chasing,   // chasing a moving target (player)
         Attacking  // attacking current target (goal/tower/player)
     }
-
     enum TargetKind
     {
         None,
@@ -25,26 +28,29 @@ public class Enemy : MonoBehaviour
         Tower
     }
 
-    [SerializeField] GameObject goal;
+    #region Confguration
+    //[SerializeField] GameObject goal;
     [SerializeField] float attackRange = 1.75f;            // how close we need to be to start attacking
     [SerializeField] float chaseRepathInterval = 0.2f;      // how often to re-issue paths while chasing
     [SerializeField] float goalPathRecheckInterval = 0.25f; // how often to verify goal path while walking
     [SerializeField] float pathEndTolerance = 0.25f;        // how close the path end must be to the target to count as "reaches target"
     [SerializeField] bool drawDebug = false;
+    #endregion
 
-
-    EnemyState currentState = EnemyState.Idle;
+    #region Cached References
     EnemyNavigation enemyNavigation;
+    #endregion
 
+
+    #region Runtime Variables
+    GameObject goal;
     Transform currentTarget;
+    EnemyState currentState = EnemyState.Idle;
     TargetKind currentTargetKind = TargetKind.None;
+
     float chaseRepathTimer = 0f;
     float goalPathRecheckTimer = 0f;
-
-
-    static int count = 0;
-
-    public static int EnemyCount => count;
+    #endregion
 
     private void OnEnable()
     {
@@ -54,6 +60,8 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         enemyNavigation = GetComponent<EnemyNavigation>();
+        goal = EnemySpawner.EnemyGoal;
+
     }
 
     void Update()
@@ -116,7 +124,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-
     void TickWalking()
     {
         // If target disappeared while walking, reset.
@@ -150,7 +157,6 @@ public class Enemy : MonoBehaviour
             }
         }
     }
-
     void TickChasing()
     {
         if (currentTarget == null)
@@ -174,7 +180,6 @@ public class Enemy : MonoBehaviour
             return;
         }
     }
-
     void TickAttacking()
     {
         // If target vanished (destroyed), reset and try again.
@@ -223,7 +228,6 @@ public class Enemy : MonoBehaviour
             DebugDrawCircle(transform.position, attackRange, Color.red);
         }
     }
-
     void BeginPursuit(Transform target, TargetKind kind, EnemyState state)
     {
         currentTarget = target;
@@ -234,7 +238,6 @@ public class Enemy : MonoBehaviour
         if (kind == TargetKind.Goal && state == EnemyState.Walking)
             goalPathRecheckTimer = 0f;
     }
-
     void ResetTarget()
     {
         currentTarget = null;
@@ -242,7 +245,6 @@ public class Enemy : MonoBehaviour
         goalPathRecheckTimer = 0f;
         currentState = EnemyState.Idle;
     }
-
     bool IsWithinAttackRange(Vector3 targetPos)
     {
         return (targetPos - transform.position).sqrMagnitude <= (attackRange * attackRange);
@@ -299,8 +301,6 @@ public class Enemy : MonoBehaviour
     {
         return TryFindNearestAttackable(out target, out kind, transform.position);
     }
-
-
     public void Die()
     {
         Debug.Log($"{gameObject.name} (Enemy) is handling death logic.");

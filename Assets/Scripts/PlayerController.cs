@@ -308,6 +308,8 @@ public class PlayerController : MonoBehaviour
     {
         // If the player is dead, we should not be able to attack
         if (_player.IsDead || isAttacking) return;
+        if (!_input.attack) return;
+
         isAttacking = true;
 
         _animator.SetLayerWeight(1, 1f);
@@ -316,16 +318,15 @@ public class PlayerController : MonoBehaviour
         animBlend = Mathf.Clamp01(animBlend);
         _animator.SetFloat(_animIDAttackBlend, animBlend);
 
-        if (_input.attack)
+        
+        // Attack animation trigger
+        if (_hasAnimator)
         {
-            // Attack animation trigger
-            if (_hasAnimator)
-            {
-                _animator.SetTrigger(_animIDAttack);
-            }
-            // Reset attack input
-            _input.attack = false;
+            _animator.SetTrigger(_animIDAttack);
         }
+        // Reset attack input
+        _input.attack = false;
+        
     }
     public void OnAttackEnded()
     {

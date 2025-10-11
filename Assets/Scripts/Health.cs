@@ -7,6 +7,8 @@ public class Health : MonoBehaviour
     [SerializeField] float MaxHealth = 100f;
     float CurrentHealth = 0;
 
+    bool IsDead;
+
     void Start()
     {
         CurrentHealth = MaxHealth;
@@ -14,8 +16,10 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
+        if(IsDead) return; // Ignore damage if already dead
+
         CurrentHealth -= damage;
-        Debugger.Log($"{transform.root.name} has taken {damage} damage");
+        //Debugger.Log($"{transform.root.name} has taken {damage} damage");
         if (CurrentHealth <= 0)
         {
             Die();
@@ -24,7 +28,8 @@ public class Health : MonoBehaviour
 
     void Die()
     {
-        Debugger.Log($"{transform.root.name} has died");
+        IsDead = true;
+        //Debugger.Log($"{gameObject.name} has died");
         SendMessage("Die", SendMessageOptions.DontRequireReceiver);
     }
 }

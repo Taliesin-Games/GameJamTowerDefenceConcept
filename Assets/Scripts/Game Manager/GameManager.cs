@@ -8,13 +8,13 @@ using UnityEngine.UI;
 [RequireComponent(typeof(LevelManager))]
 public class GameManager : MonoBehaviour
 {
-
     public static GameManager Instance { get; private set; }
 
     #region Configuration
 
     [Header("Canvase References")]
     [SerializeField] GameObject playCanvas;
+    
     #endregion
 
     #region Cached References
@@ -25,11 +25,13 @@ public class GameManager : MonoBehaviour
 
     bool gameOver = false;
     bool gameWon = false;
+    int score = 0;
     #endregion
 
     #region Properties
     public bool GameIsOver { get => gameOver; }
     public bool GameWon { get => gameWon; }
+    public static int Score => Instance.score;
     #endregion
 
     private void Awake()
@@ -50,18 +52,14 @@ public class GameManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
 
     }
-
     void Update()
     {
         if(gameOver || gameWon) return;
 
         
     }
-    
-    
     private void WinGame()
     {
         gameWon = true;
@@ -69,8 +67,6 @@ public class GameManager : MonoBehaviour
 
         LevelManager.LoadWinScreen();
     }
-    
-   
     void GameOver()
     {
         playCanvas.SetActive(false);
@@ -83,6 +79,22 @@ public class GameManager : MonoBehaviour
     private void RunPerSceneSetup()
     {
 
+    }
+
+    public void CheckWinGame()
+    {
+        if (Enemy.EnemyCount > 0) return;
+        if (!EnemySpawner.Instance.doneSpawning) return;
+
+        gameWon = true;
+        LevelManager.LoadWinScreen();
+
+    }
+
+    public void LoseGame()
+    {
+        gameOver = true;
+        LevelManager.LoadGameOver();
     }
     private void OnDestroy()
     {

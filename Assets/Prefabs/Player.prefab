@@ -133,6 +133,9 @@ MonoBehaviour:
   BottomClamp: -30
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  AttackAnimBlend: 0
+  AttackAnimBlendVariance: 0.1
+  deathSound: {fileID: 8300000, guid: 9e1ce566e68c80242a2017de244e6ca6, type: 3}
 --- !u!114 &3323604328742444683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -332,7 +335,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  IsDead: 0
 --- !u!1001 &2149733984998427438
 PrefabInstance:
   m_ObjectHideFlags: 0

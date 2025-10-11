@@ -74,6 +74,17 @@ public class PlayerController : MonoBehaviour
     [Tooltip("For locking the camera position on all axis")]
     public bool LockCameraPosition = false;
 
+    [Range (0, 1)]
+    [Tooltip("For characters setup with two attack styles what is the blend between the two.")]
+    public float AttackAnimBlend = 0;
+
+    [Range(0, 1)]
+    [Tooltip("Randomise the attack blend slightly to create a varied animation for attacking.")]
+    public float AttackAnimBlendVariance = 0.1f;
+
+    [Tooltip("The sound to play when the player dies.")]
+    public AudioClip deathSound;
+
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -97,6 +108,8 @@ public class PlayerController : MonoBehaviour
     private int _animIDFreeFall;
     private int _animIDMotionSpeed;
     private int _animIDAttack;
+    private int _animIDAttackBlend;
+    private int _animIDDied;
 
 #if ENABLE_INPUT_SYSTEM 
     private PlayerInput _playerInput;
@@ -124,6 +137,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private bool isAttacking = false;
+    private bool isDead = false;
 
 
     private void Awake()
@@ -156,6 +170,13 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        
+        // For testing purposes, press G to simulate reaching the goal
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            GetComponent<Health>()?.TakeDamage(10); // Inflict massive damage to ensure death
+        }
+
         _hasAnimator = TryGetComponent(out _animator);
 
         JumpAndGravity();
@@ -175,8 +196,9 @@ public class PlayerController : MonoBehaviour
         _animIDFreeFall = Animator.StringToHash("FreeFall");
         _animIDMotionSpeed = Animator.StringToHash("MotionSpeed");
         _animIDAttack = Animator.StringToHash("Attack");
+        _animIDAttackBlend = Animator.StringToHash("AttackBlend");
+        _animIDDied = Animator.StringToHash("Died");
     }
-
     private void GroundedCheck()
     {
         // set sphere position, with offset
@@ -191,7 +213,6 @@ public class PlayerController : MonoBehaviour
             _animator.SetBool(_animIDGrounded, Grounded);
         }
     }
-
     private void CameraRotation()
     {
         // if there is an input and camera position is not fixed
@@ -212,7 +233,6 @@ public class PlayerController : MonoBehaviour
         CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
             _cinemachineTargetYaw, 0.0f);
     }
-
     private void Move()
     {
         // set target speed based on move speed, sprint speed and if sprint is pressed
@@ -259,7 +279,7 @@ public class PlayerController : MonoBehaviour
 
         // note: Vector2's != operator uses approximation so is not floating point error prone, and is cheaper than magnitude
         // if there is a move input rotate player when the player is moving
-        if (_input.move != Vector2.zero)
+        if (_input.move != Vector2.zero && !_player.IsDead)
         {
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg +
                                 _mainCamera.transform.eulerAngles.y;
@@ -284,7 +304,6 @@ public class PlayerController : MonoBehaviour
             _animator.SetFloat(_animIDMotionSpeed, inputMagnitude);
         }
     }
-
     private void Attack()
     {
         // If the player is dead, we should not be able to attack
@@ -292,6 +311,10 @@ public class PlayerController : MonoBehaviour
         isAttacking = true;
 
         _animator.SetLayerWeight(1, 1f);
+
+        float animBlend = AttackAnimBlend + Random.Range(-AttackAnimBlendVariance, AttackAnimBlendVariance);
+        animBlend = Mathf.Clamp01(animBlend);
+        _animator.SetFloat(_animIDAttackBlend, animBlend);
 
         if (_input.attack)
         {
@@ -304,7 +327,6 @@ public class PlayerController : MonoBehaviour
             _input.attack = false;
         }
     }
-
     public void OnAttackEnded()
     {
         Debug.Log("Attack ended");
@@ -379,14 +401,12 @@ public class PlayerController : MonoBehaviour
             _verticalVelocity += Gravity * Time.deltaTime;
         }
     }
-
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
     {
         if (lfAngle < -360f) lfAngle += 360f;
         if (lfAngle > 360f) lfAngle -= 360f;
         return Mathf.Clamp(lfAngle, lfMin, lfMax);
     }
-
     private void OnDrawGizmosSelected()
     {
         Color transparentGreen = new Color(0.0f, 1.0f, 0.0f, 0.35f);
@@ -400,7 +420,6 @@ public class PlayerController : MonoBehaviour
             new Vector3(transform.position.x, transform.position.y - GroundedOffset, transform.position.z),
             GroundedRadius);
     }
-
     private void OnFootstep(AnimationEvent animationEvent)
     {
         if (animationEvent.animatorClipInfo.weight > 0.5f)
@@ -412,12 +431,20 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     private void OnLand(AnimationEvent animationEvent)
     {
         if (animationEvent.animatorClipInfo.weight > 0.5f)
         {
             AudioSource.PlayClipAtPoint(LandingAudioClip, transform.TransformPoint(_controller.center), FootstepAudioVolume);
         }
+    }
+
+    public void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+        _animator.SetTrigger(_animIDDied);
+        AudioSource.PlayClipAtPoint(deathSound, transform.position);
+        
     }
 }

@@ -56,7 +56,6 @@ public class EnemySpawner : MonoBehaviour
     void Update()
     {
         SpawnEnemies();
-        Debug.Log("Done spawning: " + doneSpawning);
     }
 
     private void SpawnEnemies()

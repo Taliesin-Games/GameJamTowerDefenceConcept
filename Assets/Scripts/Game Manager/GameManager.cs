@@ -25,11 +25,13 @@ public class GameManager : MonoBehaviour
 
     bool gameOver = false;
     bool gameWon = false;
+    int score = 0;
     #endregion
 
     #region Properties
     public bool GameIsOver { get => gameOver; }
     public bool GameWon { get => gameWon; }
+    public static int Score => Instance.score;
     #endregion
 
     private void Awake()

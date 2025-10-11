@@ -28,6 +28,7 @@ public class Health : MonoBehaviour
 
     void Die()
     {
+        if (IsDead) return; // Prevent multiple death triggers
         IsDead = true;
         //Debugger.Log($"{gameObject.name} has died");
         SendMessage("Die", SendMessageOptions.DontRequireReceiver);

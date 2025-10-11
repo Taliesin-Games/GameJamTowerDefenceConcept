@@ -88,6 +88,12 @@ public class GameManager : MonoBehaviour
         LevelManager.LoadWinScreen();
 
     }
+
+    public void LoseGame()
+    {
+        gameOver = true;
+        LevelManager.LoadGameOver();
+    }
     private void OnDestroy()
     {
         // Always unsubscribe to avoid memory leaks if destroyed manually

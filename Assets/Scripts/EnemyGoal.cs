@@ -10,14 +10,20 @@ public class EnemyGoal : MonoBehaviour
         gameManager = FindFirstObjectByType<GameManager>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        // For testing purposes, press G to simulate reaching the goal
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            GetComponent<Health>()?.TakeDamage(10); // Inflict massive damage to ensure death
+        }
     }
 
-    void Die()
+    public void Die()
     {
-
+        Debug.Log($"{gameObject.name} (EnemyGoal) is handling death logic.");
+        
+        // Example: play animation, spawn loot, disable AI, etc.
+        GameManager.Instance.LoseGame();
     }
 }

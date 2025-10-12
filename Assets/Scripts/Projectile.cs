@@ -27,6 +27,7 @@ public class Projectile : MonoBehaviour
     // Store direction of force in 2D since height will not be considerded, height dertermined by spawn location and then physics
     Vector2 direction;
     float destroyTime = 0f;
+    GameObject firingParent;
     #endregion
 
     #region Properties
@@ -34,6 +35,11 @@ public class Projectile : MonoBehaviour
     {   
         get { return direction; }
         set { direction = value.normalized; } // Ensure direction is always normalized when set
+    }
+    public GameObject FiringParent
+    {
+        get { return firingParent; }
+        set { firingParent = value; }
     }
     private Vector3 Direction3D
     {
@@ -92,6 +98,10 @@ public class Projectile : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject == firingParent) return; // Ignore collision with the firing parent
+        // Check if firing parent has a child with the same game object as the other
+        if (firingParent && other.transform.IsChildOf(firingParent.transform)) return; // Ignore collision with children of the firing parent
+
         Destroy(gameObject);
 
         if (!other.TryGetComponent<Health>(out var health)) return;

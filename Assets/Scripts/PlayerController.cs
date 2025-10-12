@@ -345,7 +345,7 @@ public class PlayerController : MonoBehaviour
     }
     public void OnAttackEnded()
     {
-        Debug.Log("Attack ended");
+        
         isAttacking = false;
         _animator.SetLayerWeight(1, 0f);
     }
@@ -473,7 +473,7 @@ public class PlayerController : MonoBehaviour
         Vector3 camForward = _mainCamera.transform.forward;
         Vector2 dir = new Vector2(camForward.x, camForward.z);
         proj.Direction  = dir ;
-
+        proj.FiringParent = this.gameObject;
 
     }
 }

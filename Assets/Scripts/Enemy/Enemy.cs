@@ -64,8 +64,12 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         count++;
+        Tower.enemies.Add(this);
     }
-
+    private void OnDisable()
+    {
+        Tower.enemies.Remove(this);
+    }
     void Awake()
     {
         enemyNavigation = GetComponent<EnemyNavigation>();
@@ -73,7 +77,6 @@ public class Enemy : MonoBehaviour
         goal = EnemySpawner.EnemyGoal;
 
     }
-
     void Update()
     {
         if (isDead) return;
@@ -102,7 +105,6 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
-
     void TickIdle()
     {
         // 1) Check if the path truly reaches the goal (not partial to the edge of the NavMesh)

@@ -404,8 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ff01e72a65be744ba3d1d62eb39c7d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  finalScoreText: {fileID: 0}
-  nameInputField: {fileID: 0}
+  finalScoreText: {fileID: 8111750421775470982}
 --- !u!1 &4648950584663955662
 GameObject:
   m_ObjectHideFlags: 0

@@ -209,7 +209,7 @@ MonoBehaviour:
   throwPower: 5
   flightPower: 50
   flightLift: 1
-  damage: 10
+  damage: 100
   lifeTime: 10
 --- !u!1001 &7018758180798901081
 PrefabInstance:

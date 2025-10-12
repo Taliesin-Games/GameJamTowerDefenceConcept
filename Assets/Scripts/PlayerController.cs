@@ -88,6 +88,11 @@ public class PlayerController : MonoBehaviour
     [Tooltip("The sound to play when the player dies.")]
     public AudioClip deathSound;
 
+    [Tooltip("The point from which projectiles will be spawned when the player performs a light attack.")]
+    public GameObject projectileSpawnPoint;
+    [Tooltip("The prefab to instantiate when the player performs a light attack.")]
+    public Projectile lightAttackPrefab;
+
     // cinemachine
     private float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
@@ -170,6 +175,12 @@ public class PlayerController : MonoBehaviour
         // reset our timeouts on start
         _jumpTimeoutDelta = JumpTimeout;
         _fallTimeoutDelta = FallTimeout;
+
+        if (projectileSpawnPoint == null)
+        {
+            Debug.LogWarning("Projectile spawn point is not assigned. Assigning to player position.");
+            projectileSpawnPoint = this.gameObject;
+        }
     }
     private void Update()
     {
@@ -451,5 +462,18 @@ public class PlayerController : MonoBehaviour
         _animator.SetTrigger(_animIDDied);
         AudioSource.PlayClipAtPoint(deathSound, transform.position);
         
+    }
+
+    public void ThrowProjectile()
+    {
+        if (lightAttackPrefab == null) return;
+        Projectile proj = Instantiate(lightAttackPrefab, projectileSpawnPoint.transform.position, projectileSpawnPoint.transform.rotation);
+
+        // Get vector2 forward based on camera forward
+        Vector3 camForward = _mainCamera.transform.forward;
+        Vector2 dir = new Vector2(camForward.x, camForward.z);
+        proj.Direction  = dir ;
+
+
     }
 }

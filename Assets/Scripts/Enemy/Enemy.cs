@@ -1,12 +1,13 @@
 using System;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utils;
+using Random = UnityEngine.Random;
 
-[RequireComponent(typeof(EnemyNavigation))
-]
-[RequireComponent(typeof(Health))
-]
+[RequireComponent(typeof(EnemyNavigation))]
+[RequireComponent(typeof(Health))]
 public class Enemy : MonoBehaviour
 {
 
@@ -35,10 +36,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] float goalPathRecheckInterval = 0.25f; // how often to verify goal path while walking
     [SerializeField] float pathEndTolerance = 0.25f;        // how close the path end must be to the target to count as "reaches target"
     [SerializeField] bool drawDebug = false;
+
+    // Combat
+    [SerializeField] int attackDamage = 10;                 // damage per hit
+    [SerializeField] float attackCooldown = 2.5f;          // attack cadence
     #endregion
 
     #region Cached References
     EnemyNavigation enemyNavigation;
+    Animator animator;
     #endregion
 
 
@@ -50,6 +56,9 @@ public class Enemy : MonoBehaviour
 
     float chaseRepathTimer = 0f;
     float goalPathRecheckTimer = 0f;
+    float nextAttackTime = 0f;
+
+    Boolean isDead = false;
     #endregion
 
     private void OnEnable()
@@ -60,12 +69,14 @@ public class Enemy : MonoBehaviour
     void Awake()
     {
         enemyNavigation = GetComponent<EnemyNavigation>();
+        animator = GetComponent<Animator>();
         goal = EnemySpawner.EnemyGoal;
 
     }
 
     void Update()
     {
+        if (isDead) return;
         // Here for debugging to manually trigger death
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -134,7 +145,7 @@ public class Enemy : MonoBehaviour
         }
 
         // Reached our static destination?
-        if (enemyNavigation.HasReachedDestination())
+        if (enemyNavigation.HasReachedDestination() || IsWithinAttackRange(currentTarget.position))
         {
             currentState = EnemyState.Attacking;
             return;
@@ -222,7 +233,13 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // TODO: Implement actual attack logic (deal damage, attack rate, etc.)
+        // In range and have a target: attack (actual damage application is driven by animation events)
+        if (Time.time > nextAttackTime)
+        {
+            nextAttackTime = Time.time + attackCooldown;
+            animator.SetTrigger("Attack");
+        }
+
         if (drawDebug)
         {
             DebugDrawCircle(transform.position, attackRange, Color.red);
@@ -301,17 +318,41 @@ public class Enemy : MonoBehaviour
     {
         return TryFindNearestAttackable(out target, out kind, transform.position);
     }
+
     public void Die()
     {
+        if (isDead) return;
+        isDead = true;
+        enemyNavigation.Die();
         Debug.Log($"{gameObject.name} (Enemy) is handling death logic.");
         count--;
         // Example: play animation, spawn loot, disable AI, etc.
+        if (animator != null)
+        {
+            animator.SetFloat("DeathType", Random.Range(0, 1));
+            animator.SetTrigger("Died");
+        }
         Destroy(gameObject, 1f); // simple cleanup for demo
     }
 
     private void OnDestroy()
     {
         GameManager.Instance.CheckWinGame();
+    }
+
+    // Apply damage to current target if cooldown elapsed
+    public void TryDealDamageToCurrentTarget()
+    {
+
+        var targetGo = currentTarget != null ? currentTarget.gameObject : null;
+        if (targetGo == null) return;
+
+        // Prefer Health on the object; if missing, look up the hierarchy
+        var health = targetGo.GetComponent<Health>();
+        if (health != null)
+        {
+            health.TakeDamage(attackDamage);
+        }
     }
 
     // Small helper to visualize attack range when debugging

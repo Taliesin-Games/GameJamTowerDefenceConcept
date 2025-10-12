@@ -13,6 +13,8 @@ public class EnemyNavigation : MonoBehaviour
 
     [SerializeField] bool debugPath = true;
 
+    bool isDead = false;
+
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -60,6 +62,12 @@ public class EnemyNavigation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDead)
+        {
+            agent.isStopped = true;
+            return;
+        }
+
         if (!agent.hasPath && !debugPath)
         {
             return;
@@ -87,6 +95,11 @@ public class EnemyNavigation : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void Die()
+    {
+        isDead = true;
     }
 }
 

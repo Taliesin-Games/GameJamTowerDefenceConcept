@@ -226,6 +226,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5405073681791368237, guid: 60be542b4b81994418261ba68dcd162e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: c6dfacf70a730684a9febb2a1c0aa701, type: 2}
+    - target: {fileID: -5063084881681412505, guid: 60be542b4b81994418261ba68dcd162e, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 83b823f8766a5274cb47b257556da8e2, type: 2}
     - target: {fileID: 919132149155446097, guid: 60be542b4b81994418261ba68dcd162e, type: 3}
       propertyPath: m_Name
       value: Goblin_Walk
